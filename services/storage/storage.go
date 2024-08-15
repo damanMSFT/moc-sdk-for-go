@@ -44,6 +44,8 @@ type VirtualHardDiskProperties struct {
 	SourcePath *string `json:"sourcePath,omitempty"`
 	// Source Type for the VHD
 	SourceType common.ImageSource `json:"sourceType,omitempty"`
+	// TargetUrl. Sasurl for the Azure Disk to Upload the VHD to.
+	TargetUrl *string `json:"targeturl,omitempty"`
 }
 
 // VirtualHardDisk defines the structure of a VHD

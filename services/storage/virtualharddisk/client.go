@@ -53,7 +53,7 @@ func (c *VirtualHardDiskClient) Delete(ctx context.Context, group, container, na
 	return c.internal.Delete(ctx, group, container, name)
 }
 
-// Resize methods invokes delete of the storage resource
+// Resize methods invokes resize of the storage resource
 func (c *VirtualHardDiskClient) Resize(ctx context.Context, group, container, name string, newSize int64) error {
 	vhds, err := c.Get(ctx, group, container, name)
 	if err != nil {
@@ -68,6 +68,25 @@ func (c *VirtualHardDiskClient) Resize(ctx context.Context, group, container, na
 	vhd.DiskSizeBytes = &newSize
 
 	_, err = c.CreateOrUpdate(ctx, group, container, name, &vhd)
+
+	return err
+}
+
+// Upload methods invokes upload of the vhd to azure disk
+func (c *VirtualHardDiskClient) Upload(ctx context.Context, group, container, name string, targetUrl string) error {
+	vhds, err := c.Get(ctx, group, container, name)
+	if err != nil {
+		return err
+	}
+
+	if len(*vhds) == 0 {
+		return errors.Wrapf(errors.NotFound, "%s", name)
+	}
+
+	vhd := (*vhds)[0]
+	vhd.TargetUrl = &targetUrl
+
+	_, err = c.Upload(ctx, group, container, name, &vhd)
 
 	return err
 }
